@@ -137,3 +137,27 @@ mysql> SELECT * FROM History;
 ```
 
 See solution [here](solution.sql).
+
+
+### Full Outer Join
+
+```
+with user_cnt as (
+  select
+  user_id,
+  song_id,
+  count(*) as cnt
+  from "RENEE_DB"."SPOTIFY"."DAILY"
+  where date(time_stamp) = '2019-03-01'
+  group by 1, 2
+)
+select
+coalesce(h.user_id, uc.user_id),
+coalesce(h.song_id, uc.song_id),
+(ifnull(h.tally,0) + ifnull(uc.cnt,0)) as tally
+from "RENEE_DB"."SPOTIFY"."HISTORY" h
+    full outer join user_cnt uc
+        on h.user_id = uc.user_id 
+        and h.song_id = uc.song_id
+;
+```
