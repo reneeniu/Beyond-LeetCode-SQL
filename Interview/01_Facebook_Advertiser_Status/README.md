@@ -141,3 +141,21 @@ SELECT * FROM Advertiser;
 9 rows in set (0.00 sec)
 ```
 See solution [here](solution.sql).
+
+
+### Full Outer
+```
+select distinct
+    coalesce(a.id, dp.id),
+    coalesce(dp.user_id, a.user_id),
+    case 
+        when dp.user_id is null then 'CHURN'
+        when dp.user_id is not null and a.status = 'CHURN' then 'RESURRECT'
+        when dp.user_id is not null and a.status != 'CHURN' then 'EXITSING'
+        when a.user_id is null then 'NEW'
+    end as status  
+from advertiser a
+    full outer join dailypay dp
+        on a.user_id = dp.user_id
+;
+```
